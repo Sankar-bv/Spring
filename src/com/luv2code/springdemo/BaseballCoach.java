@@ -4,6 +4,7 @@ public class BaseballCoach implements Coach {
 
 	private FortuneService fortuneService;
 	
+	//Contructor Injection
 	public BaseballCoach(FortuneService theFortuneService) {
 		fortuneService = theFortuneService;
 	}
@@ -16,6 +17,16 @@ public class BaseballCoach implements Coach {
 	@Override
 	public String getDailyFortune() {
 		return fortuneService.getFortune();
+	}
+	
+	//Add an init method
+	public void doStartupStuff() {
+		System.out.println("BaseballCoach: inside method doStartupStuff");
+	}
+	
+	//Add an destroy method
+	public void doCleanupStuff() {
+		System.out.println("BaseballCoach: inside method doCleanupStuff");
 	}
 	
 }

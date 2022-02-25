@@ -3,7 +3,7 @@ package com.luv2code.springdemo;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class HelloSpringApp {
+public class ConstructorInjectionApp {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
