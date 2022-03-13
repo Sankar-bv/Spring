@@ -16,6 +16,11 @@ public class MainDemoApp {
 		theAccountDAO.addAccount(theAccount, true);
 		theAccountDAO.doWork();
 		
+		theAccountDAO.setName("foobar");
+		theAccountDAO.setServiceCode("Silver");
+		String name = theAccountDAO.getName();
+		String code = theAccountDAO.getServiceCode();
+		
 		theMembershipDAO.addSillyMember();
 		theMembershipDAO.goToSleep();
 		context.close();
