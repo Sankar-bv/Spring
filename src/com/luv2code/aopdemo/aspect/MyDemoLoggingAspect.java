@@ -1,40 +1,42 @@
 package com.luv2code.aopdemo.aspect;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.luv2code.aopdemo.Account;
 
 @Aspect
 @Component
+@Order(2)
 public class MyDemoLoggingAspect {
 	
-	@Pointcut("execution(public * *(..))")
-	private void forDAOPackage() {}
-	//The above code create a pointcut declaration
-	
-	@Pointcut("execution(public * com.luv2code.aopdemo.dao.*.get*(..))")
-	//Create pointcut for getter methods
-	private void getter() {}
-	
-	@Pointcut("execution(public * com.luv2code.aopdemo.dao.*.set*(..))")
-	//Create pointcut for setter methods
-	private void setter() {}
-	
-	@Pointcut("forDAOPackage() && !(getter() || setter())")
-	//Create pointcut: include package ... exclude getter/setter
-	private void forDAOPackageNoGetterSetter() {}
-	
-	@Before("forDAOPackageNoGetterSetter()")
-	//Applying pointcut declaration to advice
-	public void beforeAddAdvice() {
-		System.out.println("\nExecuting @Before advice on method");
-	}
-	
-	@Before("forDAOPackageNoGetterSetter()")
-	//Applying pointcut declaration to another advice
-	public void performApiAnalytics() {
-		System.out.println("Performing API Analytics");
+	@Before("com.luv2code.aopdemo.aspect.LuvAopExpressions.forDaoPackageNoGetterSetter()")
+	//If we need to use pointcuts from different class we need to provide fully qualified class name in before annotation.
+	public void beforeAddAdvice(JoinPoint theJoinPoint) {
+		System.out.println("Executing @Before advice on method");
+		
+		//Display the method signature
+		MethodSignature methodSig = (MethodSignature) theJoinPoint.getSignature();
+		System.out.println("Method: " + methodSig);
+		
+		//Get the args
+		Object[] args = theJoinPoint.getArgs();
+		
+		//Loop through args
+		for (Object temp : args) {
+			System.out.println(temp);
+			
+			if(temp instanceof Account) {
+				//Downcast temp and print Account specific stuff
+				Account theAccount = (Account) temp;
+				System.out.println("Account name: " + theAccount.getName());
+				System.out.println("Account level: " + theAccount.getLevel());
+			}
+		}
 	}
 	
 }
