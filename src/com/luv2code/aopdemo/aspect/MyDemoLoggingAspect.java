@@ -1,6 +1,10 @@
 package com.luv2code.aopdemo.aspect;
 
+import java.util.List;
+
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -13,6 +17,29 @@ import com.luv2code.aopdemo.Account;
 @Component
 @Order(2)
 public class MyDemoLoggingAspect {
+	
+	@AfterThrowing(pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))", throwing = "theExc")
+	public void afterThrowingFindAccountsAdvice(JoinPoint theJoinPoint, Throwable theExc) {
+		//Print out which method we are advising on
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n====>>> Executing AfterThrowing on method: " + method);
+		//Log the exception
+		System.out.println("\n====>>> The exception is: " + theExc);
+	}
+	
+	@AfterReturning(pointcut = "execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))", returning = "result")
+	public void afterReturningFindAccountsAdvice(JoinPoint theJoinPoint, List<Account> result) {
+		String method = theJoinPoint.getSignature().toShortString();
+		System.out.println("\n===>>> Executing @AfterReturning on method: " + method);
+		System.out.println("\n===>>> Result is: " + result);
+		
+		//Let's post process the data. Let's modify it
+		for (Account account : result) {
+			String theUpperCase = account.getName().toUpperCase();
+			account.setName(theUpperCase);
+		}
+		System.out.println("\n===>>> After modidy the result is: " + result);
+	}
 	
 	@Before("com.luv2code.aopdemo.aspect.LuvAopExpressions.forDaoPackageNoGetterSetter()")
 	//If we need to use pointcuts from different class we need to provide fully qualified class name in before annotation.
