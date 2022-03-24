@@ -3,9 +3,11 @@ package com.luv2code.aopdemo.aspect;
 import java.util.List;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -18,6 +20,31 @@ import com.luv2code.aopdemo.Account;
 @Component
 @Order(2)
 public class MyDemoLoggingAspect {
+	
+	@Around("execution(* com.luv2code.aopdemo.service.*.getFortune(..))")
+	public Object aroundGetFortune(ProceedingJoinPoint theProceedingJoinPoint) throws Throwable {
+		String method = theProceedingJoinPoint.getSignature().toShortString();
+		System.out.println("\n===>>> Executing @Around on method: " + method);
+		
+		long begin = System.currentTimeMillis();
+		
+		Object result = null;
+		try {
+			result = theProceedingJoinPoint.proceed();
+		}
+		catch(Exception e) {
+			//Log the Exception
+			System.err.println(e.getMessage());
+			//Give user a custom message
+			result = "Major Accident! But no worries, " + "your private AOP helicopter is on the way!";
+			//throw e;
+		}
+		
+		long end = System.currentTimeMillis();
+		long duration = end - begin;
+		System.out.println("\n====> Duration: " + duration / 1000.0 + " seconds");
+		return result;
+	}
 	
 	@After("execution(* com.luv2code.aopdemo.dao.AccountDAO.findAccounts(..))")
 	public void afterFinallyFindAccountsAdvice(JoinPoint theJoinPoint) {
