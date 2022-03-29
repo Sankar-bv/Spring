@@ -7,7 +7,7 @@ import org.hibernate.cfg.Configuration;
 import com.luv2code.hibernate.demo.entity.Instructor;
 import com.luv2code.hibernate.demo.entity.InstructorDetail;
 
-public class DeleteDemo {
+public class DeleteInstructorDetailDemo {
 
 	public static void main(String[] args) {
 
@@ -22,19 +22,23 @@ public class DeleteDemo {
 			//Start a transaction
 			session.beginTransaction();
 			
-			//Get instructor by primary key
-			int id = 4;
-			Instructor instructor = session.get(Instructor.class, id);
-			//Delete the object
-			if(instructor != null) {
-				System.out.println("Deleting instructor: " + instructor);
-				session.delete(instructor);				
-			}
+			//Get the instructor detail object
+			int id = 3;
+			InstructorDetail instructorDetail = session.get(InstructorDetail.class, id);
+			//Print the instructor detail
+			System.out.println("InstructorDetail: " + instructorDetail);
+			//Print the associated instructor
+			System.out.println("The associated instructor: " + instructorDetail.getInstructor());
+			//Now let's delete the instructor detail
+			System.out.println("Deleting instructorDetail: " + instructorDetail);
+			session.delete(instructorDetail);
 			
 			//Commit the transaction
 			session.getTransaction().commit();
 			System.out.println("Done");
 		} finally {
+			//Close the database connection to prevent data leak
+			session.close();
 			factory.close();
 		}
 		
