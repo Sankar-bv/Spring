@@ -4,10 +4,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import com.luv2code.hibernate.demo.entity.Course;
 import com.luv2code.hibernate.demo.entity.Instructor;
 import com.luv2code.hibernate.demo.entity.InstructorDetail;
+import com.luv2code.hibernate.demo.entity.Review;
+import com.luv2code.hibernate.demo.entity.Student;
 
-public class DeleteOnlyInstructorDetailDemo {
+public class DeleteMaryStudentDemo {
 
 	public static void main(String[] args) {
 
@@ -15,33 +18,29 @@ public class DeleteOnlyInstructorDetailDemo {
 				.configure()
 				.addAnnotatedClass(Instructor.class)
 				.addAnnotatedClass(InstructorDetail.class)
+				.addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Review.class)
+				.addAnnotatedClass(Student.class)
 				.buildSessionFactory();
 		Session session = factory.getCurrentSession();
 		try {
-			
 			//Start a transaction
 			session.beginTransaction();
 			
-			//Get the instructor detail object
-			int id = 6;
-			InstructorDetail instructorDetail = session.get(InstructorDetail.class, id);
-			//Print the instructor detail
-			System.out.println("InstructorDetail: " + instructorDetail);
-			//Print the associated instructor
-			System.out.println("The associated instructor: " + instructorDetail.getInstructor());
-			//Now let's delete the instructor detail
-			System.out.println("Deleting instructorDetail: " + instructorDetail);
-			//Remove the associated object reference
-			//Break bi-directional link
-			instructorDetail.getInstructor().setInstructorDetail(null);
+			//Get the student mary from database
+			int studentId = 2;
+			Student tempStudent = session.get(Student.class, studentId);
+			System.out.println("\nLoaded student: " + tempStudent);
+			System.out.println("Course: " + tempStudent.getCourses());
 			
-			session.delete(instructorDetail);
+			//Delete student
+			System.out.println("\nDeleting student: " + tempStudent);
+			session.delete(tempStudent);
 			
 			//Commit the transaction
 			session.getTransaction().commit();
 			System.out.println("Done");
 		} finally {
-			//Close the database connection to prevent data leak
 			session.close();
 			factory.close();
 		}

@@ -7,8 +7,10 @@ import org.hibernate.cfg.Configuration;
 import com.luv2code.hibernate.demo.entity.Course;
 import com.luv2code.hibernate.demo.entity.Instructor;
 import com.luv2code.hibernate.demo.entity.InstructorDetail;
+import com.luv2code.hibernate.demo.entity.Review;
+import com.luv2code.hibernate.demo.entity.Student;
 
-public class CreateInstructorDemo {
+public class DeletePacmanCourseDemo {
 
 	public static void main(String[] args) {
 
@@ -17,20 +19,21 @@ public class CreateInstructorDemo {
 				.addAnnotatedClass(Instructor.class)
 				.addAnnotatedClass(InstructorDetail.class)
 				.addAnnotatedClass(Course.class)
+				.addAnnotatedClass(Review.class)
+				.addAnnotatedClass(Student.class)
 				.buildSessionFactory();
 		Session session = factory.getCurrentSession();
 		try {
-			//Create the objects
-			Instructor instructor = new Instructor("Susan", "Public", "susan.public@luv2code.com");
-			InstructorDetail instructorDetail = new InstructorDetail("http://www.luv2code.com/youtube", "Video Games");
-			instructor.setInstructorDetail(instructorDetail);
-			
 			//Start a transaction
 			session.beginTransaction();
 			
-			//Save the object
-			System.out.println("Saving instructor: " + instructor);
-			session.save(instructor);
+			//Get the pacman course from database
+			int courseId = 10;
+			Course tempCourse = session.get(Course.class, courseId);
+			
+			//Delete the course
+			System.out.println("Deleting course: " + tempCourse);
+			session.delete(tempCourse);
 			
 			//Commit the transaction
 			session.getTransaction().commit();
